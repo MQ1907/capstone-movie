@@ -1,3 +1,4 @@
+import axios from "axios";
 import fetcher from "./fetcher";
 
 export async function getBanner() {
@@ -29,9 +30,9 @@ export async function getMovieDetails(movieId) {
         MaPhim: movieId,
       },
     });
-    return response.data.content;
+    return response?.data.content;
   } catch (error) {
-    throw error.response.data.content;
+    throw error.response.data?.content;
   }
 }
 
@@ -41,6 +42,28 @@ export async function addMovie(movie) {
       "/QuanLyPhim/ThemPhimUpLoadHinh",
       movie
     );
+    return response.data?.content;
+  } catch (error) {
+    throw error.response.data?.content;
+  }
+}
+
+export async function editMovie(movie) {
+  try {
+    const response = await fetcher.post("/QuanLyPhim/CapNhatPhimUpload", movie);
+    return response.data?.content;
+  } catch (error) {
+    throw error.response.data?.content;
+  }
+}
+
+export async function deleteMovie(movie) {
+  try {
+    const response = await fetcher.delete("/QuanLyPhim/XoaPhim/",  {
+      params: {
+        MaPhim: movie,
+      },
+    });
     return response.data?.content;
   } catch (error) {
     throw error.response.data?.content;

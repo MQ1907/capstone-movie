@@ -9,6 +9,8 @@ const fetcher = axios.create({
   },
 });
 
+
+// thêm dữ liệu khi đẩy request đi
 fetcher.interceptors.request.use((request) => {
   //Kiểm tra xem user đã đăng nhập hay chưa để thêm token của user vào headers
   const user = JSON.parse(localStorage.getItem("currentUser"));

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { addMovie } from "../../../apis/movieAPI";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { editMovie, getMovieDetails } from "../../../apis/movieAPI";
 import dayjs from "dayjs";
 import { Box, FormControl, FormControlLabel, FormGroup, FormLabel, Modal, Radio, RadioGroup, TextField } from "@mui/material";
 import { mixed, object, string } from "yup";
@@ -18,14 +18,27 @@ const addMovieSchema = object({
 });
 
 
-export default function AddMovie({ handleClose }) {
-  const [isHot, setIsHot] = useState(false);
-  const [isNowShowing, setIsNowShowing] = useState(false);
-  const [isComingSoon, setIsComingSoon] = useState(false);
-  const [rating, setRating] = useState(2);
-  const [imgPreview, setImgPreview] = useState("");
+export default function EditMovie({ handleClose, id }) {
 
-  const { register,reset,  handleSubmit, watch, formState: { errors } } = useForm({
+
+
+  const [rating, setRating] = useState(2);
+
+  const { data: infoMovie = {}, isLoading } = useQuery({
+    queryKey: ["infoOfMovie", id],
+    queryFn: () => getMovieDetails(id),
+    enabled: !!id
+  })
+
+  console.log(id)
+  console.log(infoMovie)
+  console.log(infoMovie.maPhim)
+
+
+
+
+
+  const { register, reset, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     defaultValues: {
       tenPhim: "",
       biDanh: "",
@@ -33,14 +46,46 @@ export default function AddMovie({ handleClose }) {
       hinhAnh: "",
       trailer: "",
       ngayKhoiChieu: "",
-
+      sapChieu: false,
+      dangChieu: false,
+      hot: false,
+      danhGia: 2,
     },
-    resolver: yupResolver(addMovieSchema)
+    resolver: yupResolver(addMovieSchema),
+
   });
+
+  console.log(infoMovie)
+
+  console.log(!!id)
+  useEffect(() => {
+    if (!!id) {
+      // bản chất nó trong if là tự ép kiểu rồi
+      // setValue("maPhim", infoMovie.maPhim);
+      setValue("tenPhim", infoMovie.tenPhim);
+      setValue("biDanh", infoMovie.biDanh);
+      setValue("moTa", infoMovie.moTa);
+      setImgPreview(infoMovie?.hinhAnh);
+      setValue("trailer", infoMovie.trailer);
+      // setValue(watch("ngayKhoiChieu"));
+      setValue("ngayKhoiChieu", dayjs(infoMovie.ngayKhoiChieu).format("YYYY-MM-DD"));
+      setValue("sapChieu", infoMovie?.sapChieu);
+      setValue("dangChieu", infoMovie?.dangChieu);
+      setValue("hot", infoMovie?.hot);
+      if (infoMovie.danhGia !== undefined) {
+        setRating(infoMovie.danhGia);
+      }
+    }
+  }, [infoMovie, setValue])
+  //infoMovie, setValue
+
+
 
   const { mutate: onSubmit } = useMutation({
     mutationFn: (values) => {
+      console.log(values)
       const formData = new FormData();
+      formData.append("maPhim", id);
       formData.append("tenPhim", values.tenPhim);
       formData.append("biDanh", values.biDanh);
       formData.append("moTa", values.moTa);
@@ -48,12 +93,11 @@ export default function AddMovie({ handleClose }) {
       formData.append("trailer", values.trailer);
       formData.append("ngayKhoiChieu", values.ngayKhoiChieu);
       formData.append("maNhom", "GP13");
-      formData.append("sapChieu", isComingSoon);
-      formData.append("dangChieu", isNowShowing);
-      formData.append("hot", isHot);
-
-
-      return addMovie(formData);
+      formData.append("hot", values.hot);
+      formData.append("dangChieu", values.dangChieu);
+      formData.append("sapChieu", values.sapChieu);
+      formData.append("danhGia", values.danhGia);
+      return editMovie(formData);
     },
 
     onSuccess: () => {
@@ -61,19 +105,22 @@ export default function AddMovie({ handleClose }) {
       // Sử dụng queryClient.invalidationQueries để gọi lại API get danh sách phim
       handleClose()
       setImgPreview("")
+
       reset()
     },
     onError: () => {
-      
+
     },
-    
+
   });
-  
-  console.log(isComingSoon,isHot,isNowShowing)
+
+  // ======
 
   const hinhAnh = watch("hinhAnh");
 
+  console.log(hinhAnh)
 
+  const [imgPreview, setImgPreview] = useState("");
 
   useEffect(() => {
     //Chạy vào useEffect callback khi giá trị của hình Ảnh bị thay đổi
@@ -88,14 +135,20 @@ export default function AddMovie({ handleClose }) {
   }, [hinhAnh]);
 
 
+
+  // ======= end
+
+
   const rootRef = useRef(null);
 
-
+  // console.log(watch("ngayKhoiChieu"))
+  console.log(infoMovie.ngayKhoiChieu)
 
   return (
 
 
     <form onSubmit={handleSubmit(onSubmit)}>
+
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
@@ -106,6 +159,9 @@ export default function AddMovie({ handleClose }) {
           error={!!errors.tenPhim}
           helperText={errors.tenPhim?.message}
           {...register("tenPhim")}
+          InputLabelProps={{
+            shrink: true, // Label sẽ được hiển thị lên trên
+          }}
         />
         {/* <input placeholder="Tên Phim" {...register("tenPhim")} /> */}
       </div>
@@ -119,6 +175,9 @@ export default function AddMovie({ handleClose }) {
           error={!!errors.biDanh}
           helperText={errors.biDanh?.message}
           {...register("biDanh")}
+          InputLabelProps={{
+            shrink: true, // Label sẽ được hiển thị lên trên
+          }}
         />
         {/* <input placeholder="Bí danh" {...register("biDanh")} /> */}
       </div>
@@ -132,6 +191,9 @@ export default function AddMovie({ handleClose }) {
           error={!!errors.moTa}
           helperText={errors.moTa?.message}
           {...register("moTa")}
+          InputLabelProps={{
+            shrink: true, // Label sẽ được hiển thị lên trên
+          }}
         />
         {/* <input placeholder="Mô tả" {...register("moTa")} /> */}
       </div>
@@ -146,6 +208,9 @@ export default function AddMovie({ handleClose }) {
           error={!!errors.hinhAnh}
           helperText={errors.hinhAnh?.message}
           {...register("hinhAnh")}
+          InputLabelProps={{
+            shrink: true, // Label sẽ được hiển thị lên trên
+          }}
         />
         {/* event.target.files */}
         {/* <input type="file" placeholder="Hình Ảnh" {...register("hinhAnh")} /> */}
@@ -161,6 +226,9 @@ export default function AddMovie({ handleClose }) {
           error={!!errors.trailer}
           helperText={errors.trailer?.message}
           {...register("trailer")}
+          InputLabelProps={{
+            shrink: true, // Label sẽ được hiển thị lên trên
+          }}
         />
         {/* <input placeholder="Trailer" {...register("trailer")} /> */}
       </div>
@@ -179,15 +247,26 @@ export default function AddMovie({ handleClose }) {
               return dayjs(value).format("DD/MM/YYYY");
             },
           })}
+
+          InputLabelProps={{
+            shrink: true, // Label sẽ được hiển thị lên trên
+          }}
         /> */}
-        <input
+
+        <TextField
+          fullWidth
+          label="Ngày khởi chiếu"
           type="date"
-          placeholder="Ngày khởi chiếu"
+          color="success"
+          variant="outlined"
+          InputLabelProps={{ shrink: true }}
           {...register("ngayKhoiChieu", {
-            setValueAs: (value) => {
-              return dayjs(value).format("DD/MM/YYYY");
+            setValueAs: (values) => {
+              return dayjs(values).format("DD/MM/YYYY");
             },
           })}
+          error={!!errors.ngayKhoiChieu}
+          helperText={errors.ngayKhoiChieu && errors.ngayKhoiChieu.message}
         />
       </div>
       <div>
@@ -197,13 +276,10 @@ export default function AddMovie({ handleClose }) {
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group" {...register("sapChieu")}
-            onChange={(event) => {
-              setIsComingSoon(event.target.value === "true"); // Chuyển chuỗi "true" thành true, "false" thành false
-            }}
           >
 
-            <FormControlLabel value={true.toString()} control={<Radio />} label="True" />
-            <FormControlLabel value={false.toString()} control={<Radio />} label="False" />
+            <FormControlLabel value={true} control={<Radio />} label="True" />
+            <FormControlLabel value={false} control={<Radio />} label="False" />
 
           </RadioGroup>
 
@@ -214,15 +290,10 @@ export default function AddMovie({ handleClose }) {
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"  {...register("dangChieu")}
-            onChange={(event) => {
-              console.log("event",event.target.value)
-              setIsNowShowing(event.target.value === "true"); // Chuyển chuỗi "true" thành true, "false" thành false
-              console.log("dangchieu",isNowShowing)
-            }}
           >
 
-            <FormControlLabel value="true" control={<Radio />} label="True" />
-            <FormControlLabel value="false" control={<Radio />} label="False" />
+            <FormControlLabel value={true} control={<Radio />} label="True" />
+            <FormControlLabel value={false} control={<Radio />} label="False" />
 
           </RadioGroup>
 
@@ -233,24 +304,17 @@ export default function AddMovie({ handleClose }) {
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group" {...register("hot")}
-            onChange={(event) => {
-              console.log("hot",isHot)
-              console.log("event",event.target.value)
-              setIsHot(event.target.value === "true"); // Chuyển chuỗi "true" thành true, "false" thành false
-              console.log("hot",isHot)
-
-            }}
           >
 
-            <FormControlLabel value={true.toString()} control={<Radio />}  label="True" />
-            <FormControlLabel value={false.toString()} control={<Radio />} label="False" />
+            <FormControlLabel value={true} control={<Radio />} label="True" />
+            <FormControlLabel value={false} control={<Radio />} label="False" />
 
           </RadioGroup>
 
         </FormControl>
       </div>
 
-      <button>Thêm Phim</button>
+      <button>Chỉnh Sửa</button>
     </form>
 
 

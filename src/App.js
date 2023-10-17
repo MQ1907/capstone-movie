@@ -9,6 +9,9 @@ import useProvider from "./contexts/UserContext/UserContext";
 import UserProvider from "./contexts/UserContext/UserContext";
 import ProtectedRoute from "./routers/ProtectedRoute/ProtectedRoute";
 import AdminMovie from "./modules/AdminMovie/AdminMovie";
+import AdminLayout from "./layouts/AdminLayout";
+import UserManagement from "./modules/AdminMovie/User/UserManagement/UserManagement";
+import TicketMovie from "./TicketMovie/TicketMovie";
 
 function App() {
   return (
@@ -22,19 +25,21 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route
                 path="tickets/:showtimeId"
-                element={<div>Ticket Page</div>}
+                element={<TicketMovie/>}
               />
             </Route>
 
             {/* Admin */}
 
-            <Route path="/admin/movies" element={<AdminMovie />} />
+            {/* <Route path="/admin/movies" element={<AdminMovie />} /> */}
           </Route>
 
           {/* Admin */}
           {/* <Route element={<AdminProtectedMovieRoute />} />> */}
-          <Route path="/admin" /*element={<div>Đây là AdminLayout</div>}*/>
-            <Route path="movies" element={<AdminMovie />} />
+          <Route path="/admin"  element={<AdminLayout/>}>
+            {/* <Route  element={<AdminMovie />} /> */}
+            <Route path="movies" index element={<AdminMovie />} />
+            <Route path="users" element={<UserManagement />} />
           </Route>
           {/* <Route /> */}
           <Route path="/sign-in" element={<Signin />} />
