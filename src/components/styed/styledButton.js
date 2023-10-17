@@ -26,3 +26,21 @@ export const ButtonMovie = styled.div`
     transform: translateX(-50%); */
   }
 `;
+
+export const ButtonCinema = styled.button`
+  color: #108f3e;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  border: 1px solid #e4e4e4;
+  cursor: pointer;
+  margin: 0px 16px 16px 0px;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: rgba(246, 246, 246, 0.5);
+  transition: all 0.3s;
+  &:hover {
+    color: red;
+    font-weight: bold;
+  }
+`;

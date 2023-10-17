@@ -50,7 +50,7 @@ export default function Header(props) {
     { id: "showing", label: "Lịch chiếu" },
     { id: "cinema", label: "Cụm rạp" },
     { id: "tintuc", label: "Tin tức" },
-    { id: "ungdung", label: "Ứng dụng" },
+    { id: "application", label: "Ứng dụng" },
   ];
   const settings = ["Profile", "Account", "Dashboard", "Logout"];
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -70,7 +70,11 @@ export default function Header(props) {
     setAnchorElNav(null);
     navigate(`/`);
     const element = document.getElementById(`${page.id}`);
-    element.scrollIntoView({ behavior: "smooth" });
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.reload();
+    }
   };
 
   const handleCloseUserMenu = (setting) => {
