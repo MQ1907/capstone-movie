@@ -71,7 +71,7 @@ export default function Cinema({ theaterId }) {
     <Container
       sx={{
         margin: "100px auto",
-        marginBottom: "10px",
+        marginBottom: "100px",
         borderRadius: "5px",
         height: "80vh",
         overflow: "hidden",
