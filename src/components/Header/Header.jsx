@@ -20,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../contexts/UserContext/UserContext";
 import { SigninAndSignup, SpanHeader } from "./styledHeader";
 import PropTypes from "prop-types";
+
+
 function ElevationScroll(props) {
   const { children, window } = props;
   // Note that you normally won't need to set the window ref as useScrollTrigger
@@ -27,7 +29,7 @@ function ElevationScroll(props) {
   // This is only being set here because the demo is in an iframe.
   const trigger = useScrollTrigger({
     disableHysteresis: true,
-    threshold: 0,
+    threshold: 100,
     target: window ? window() : undefined,
   });
 
@@ -70,6 +72,7 @@ export default function Header(props) {
     setAnchorElNav(null);
     navigate(`/`);
     const element = document.getElementById(`${page.id}`);
+    console.log(element)
     element.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -148,6 +151,8 @@ export default function Header(props) {
                   ))}
                 </Menu>
               </Box>
+
+
               <MovieFilterIcon
                 sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
                 color="error"
