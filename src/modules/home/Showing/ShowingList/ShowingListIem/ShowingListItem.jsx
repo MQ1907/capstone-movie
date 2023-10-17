@@ -39,7 +39,7 @@ export default function ShowingListItem({ movie }) {
           <Box
             position={"absolute"}
             sx={{
-              backgroundColor: "#00000080",
+              backgroundColor: "#000000",
               top: 0,
               left: 0,
               width: "100%",
@@ -62,7 +62,7 @@ export default function ShowingListItem({ movie }) {
 
         <Box
           sx={{
-            backgroundColor: "#00000080",
+            backgroundColor: "#000000",
             color: "#fff",
             padding: "10px",
             borderRadius: "0 0 10px 10px ",

@@ -14,7 +14,7 @@ export async function getMovieShowTimes(movieId) {
   }
 }
 
-export async function getCinema() {
+export async function getCinema(cinemaSystem) {
   try {
     const response = await fetcher.get(`/QuanLyRap/LayThongTinHeThongRap`);
     return response.data.content;
