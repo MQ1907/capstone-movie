@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { editMovie, getMovieDetails } from "../../../apis/movieAPI";
 import dayjs from "dayjs";
 import { Box, FormControl, FormControlLabel, FormGroup, FormLabel, Modal, Radio, RadioGroup, TextField } from "@mui/material";
@@ -20,22 +20,18 @@ const addMovieSchema = object({
 
 export default function EditMovie({ handleClose, id }) {
 
-
-
+  const queryClient = useQueryClient();
+  const [isHot, setIsHot] = useState(false);
+  const [isNowShowing, setIsNowShowing] = useState(false);
+  const [isComingSoon, setIsComingSoon] = useState(false);
   const [rating, setRating] = useState(2);
+  const [imgPreview, setImgPreview] = useState("");
 
   const { data: infoMovie = {}, isLoading } = useQuery({
     queryKey: ["infoOfMovie", id],
     queryFn: () => getMovieDetails(id),
     enabled: !!id
   })
-
-  console.log(id)
-  console.log(infoMovie)
-  console.log(infoMovie.maPhim)
-
-
-
 
 
   const { register, reset, handleSubmit, watch, setValue, formState: { errors } } = useForm({
@@ -46,21 +42,13 @@ export default function EditMovie({ handleClose, id }) {
       hinhAnh: "",
       trailer: "",
       ngayKhoiChieu: "",
-      sapChieu: false,
-      dangChieu: false,
-      hot: false,
-      danhGia: 2,
     },
     resolver: yupResolver(addMovieSchema),
 
   });
 
-  console.log(infoMovie)
-
-  console.log(!!id)
   useEffect(() => {
     if (!!id) {
-      // bản chất nó trong if là tự ép kiểu rồi
       // setValue("maPhim", infoMovie.maPhim);
       setValue("tenPhim", infoMovie.tenPhim);
       setValue("biDanh", infoMovie.biDanh);
@@ -69,64 +57,28 @@ export default function EditMovie({ handleClose, id }) {
       setValue("trailer", infoMovie.trailer);
       // setValue(watch("ngayKhoiChieu"));
       setValue("ngayKhoiChieu", dayjs(infoMovie.ngayKhoiChieu).format("YYYY-MM-DD"));
-      setValue("sapChieu", infoMovie?.sapChieu);
-      setValue("dangChieu", infoMovie?.dangChieu);
-      setValue("hot", infoMovie?.hot);
+      setIsComingSoon(infoMovie?.sapChieu);
+      setIsNowShowing(infoMovie?.dangChieu);
+      setIsHot(infoMovie?.hot);
       if (infoMovie.danhGia !== undefined) {
-        setRating(infoMovie.danhGia);
+        setRating(5);
       }
     }
   }, [infoMovie, setValue])
-  //infoMovie, setValue
-
-
-
-  const { mutate: onSubmit } = useMutation({
-    mutationFn: (values) => {
-      console.log(values)
-      const formData = new FormData();
-      formData.append("maPhim", id);
-      formData.append("tenPhim", values.tenPhim);
-      formData.append("biDanh", values.biDanh);
-      formData.append("moTa", values.moTa);
-      formData.append("hinhAnh", values.hinhAnh[0]);
-      formData.append("trailer", values.trailer);
-      formData.append("ngayKhoiChieu", values.ngayKhoiChieu);
-      formData.append("maNhom", "GP13");
-      formData.append("hot", values.hot);
-      formData.append("dangChieu", values.dangChieu);
-      formData.append("sapChieu", values.sapChieu);
-      formData.append("danhGia", values.danhGia);
-      return editMovie(formData);
-    },
-
-    onSuccess: () => {
-      //Đóng modal hoặc chuyển trang
-      // Sử dụng queryClient.invalidationQueries để gọi lại API get danh sách phim
-      handleClose()
-      setImgPreview("")
-
-      reset()
-    },
-    onError: () => {
-
-    },
-
-  });
 
   // ======
 
   const hinhAnh = watch("hinhAnh");
 
-  console.log(hinhAnh)
 
-  const [imgPreview, setImgPreview] = useState("");
+
+
 
   useEffect(() => {
     //Chạy vào useEffect callback khi giá trị của hình Ảnh bị thay đổi
     const file = hinhAnh?.[0];
     if (!file) return;
-
+    console.log("vo")
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
     fileReader.onload = (event) => {
@@ -139,10 +91,55 @@ export default function EditMovie({ handleClose, id }) {
   // ======= end
 
 
+
+  //infoMovie, setValue
+  const { mutate: onSubmit } = useMutation({
+    mutationFn: (values) => {
+      const formData = new FormData();
+      formData.append("maPhim", id);
+      formData.append("tenPhim", values.tenPhim);
+      formData.append("biDanh", values.biDanh);
+      formData.append("moTa", values.moTa);
+      formData.append("hinhAnh", values.hinhAnh[0]);
+      formData.append("trailer", values.trailer);
+      formData.append("ngayKhoiChieu", values.ngayKhoiChieu);
+      formData.append("maNhom", "GP13");
+      formData.append("hot", isHot);
+      formData.append("dangChieu", isNowShowing);
+      formData.append("sapChieu", isComingSoon);
+      formData.append("danhGia", rating);
+      return editMovie(formData);
+    },
+
+    onSuccess: () => {
+      //Đóng modal hoặc chuyển trang
+      // reset()
+      handleClose()
+      queryClient.invalidateQueries("infoOfMovie")
+
+    },
+    onError: () => {
+
+    },
+
+  });
+
+
+
+
+
+
+
+
+
   const rootRef = useRef(null);
 
-  // console.log(watch("ngayKhoiChieu"))
-  console.log(infoMovie.ngayKhoiChieu)
+  // ===== Change value radio
+  const handleChangeNowShowing = () => setIsNowShowing(!isNowShowing)
+  const handleChangeComingSoon = () => setIsComingSoon(!isComingSoon)
+  const handleChangeHot = () => setIsHot(!isHot)
+
+  console.log(infoMovie)
 
   return (
 
@@ -152,11 +149,11 @@ export default function EditMovie({ handleClose, id }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+
           id="tenPhim"
           label="Tên Phim"
           variant="outlined"
-          error={!!errors.tenPhim}
+          error={errors?.tenPhim}
           helperText={errors.tenPhim?.message}
           {...register("tenPhim")}
           InputLabelProps={{
@@ -168,11 +165,11 @@ export default function EditMovie({ handleClose, id }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+
           id="biDanh"
           label="Bí Danh"
           variant="outlined"
-          error={!!errors.biDanh}
+          error={errors?.biDanh}
           helperText={errors.biDanh?.message}
           {...register("biDanh")}
           InputLabelProps={{
@@ -184,11 +181,11 @@ export default function EditMovie({ handleClose, id }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+
           id="moTa"
           label="Mô tả"
           variant="outlined"
-          error={!!errors.moTa}
+          error={errors?.moTa}
           helperText={errors.moTa?.message}
           {...register("moTa")}
           InputLabelProps={{
@@ -200,17 +197,13 @@ export default function EditMovie({ handleClose, id }) {
       <div>
         <input
           style={{ marginBottom: "15px" }}
-          fullWidth="100%"
+
           id="hinhAnh"
           label="Hình Ảnh"
           type="file"
           variant="outlined"
-          error={!!errors.hinhAnh}
-          helperText={errors.hinhAnh?.message}
           {...register("hinhAnh")}
-          InputLabelProps={{
-            shrink: true, // Label sẽ được hiển thị lên trên
-          }}
+
         />
         {/* event.target.files */}
         {/* <input type="file" placeholder="Hình Ảnh" {...register("hinhAnh")} /> */}
@@ -219,7 +212,7 @@ export default function EditMovie({ handleClose, id }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+
           id="trailer"
           label="Trailer"
           variant="outlined"
@@ -233,25 +226,7 @@ export default function EditMovie({ handleClose, id }) {
         {/* <input placeholder="Trailer" {...register("trailer")} /> */}
       </div>
       <div>
-        {/* <TextField
-          sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
-          id="ngayKhoiChieu"
-          label="Ngày Khởi Chiếu Phim"
-          type="date"
-          variant="outlined"
-          error={!!errors.ngayKhoiChieu}
-          helperText={errors.ngayKhoiChieu?.message}
-          {...register("ngayKhoiChieu", {
-            setValueAs: (value) => {
-              return dayjs(value).format("DD/MM/YYYY");
-            },
-          })}
 
-          InputLabelProps={{
-            shrink: true, // Label sẽ được hiển thị lên trên
-          }}
-        /> */}
 
         <TextField
           fullWidth
@@ -275,7 +250,7 @@ export default function EditMovie({ handleClose, id }) {
           <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group" {...register("sapChieu")}
+            name="row-radio-buttons-group" value={isComingSoon} onChange={handleChangeComingSoon}
           >
 
             <FormControlLabel value={true} control={<Radio />} label="True" />
@@ -289,7 +264,7 @@ export default function EditMovie({ handleClose, id }) {
           <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group"  {...register("dangChieu")}
+            name="row-radio-buttons-group" value={isNowShowing} onChange={handleChangeNowShowing}
           >
 
             <FormControlLabel value={true} control={<Radio />} label="True" />
@@ -303,7 +278,7 @@ export default function EditMovie({ handleClose, id }) {
           <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
-            name="row-radio-buttons-group" {...register("hot")}
+            name="row-radio-buttons-group" value={isHot} onChange={handleChangeHot}
           >
 
             <FormControlLabel value={true} control={<Radio />} label="True" />

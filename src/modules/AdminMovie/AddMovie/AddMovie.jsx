@@ -22,10 +22,10 @@ export default function AddMovie({ handleClose }) {
   const [isHot, setIsHot] = useState(false);
   const [isNowShowing, setIsNowShowing] = useState(false);
   const [isComingSoon, setIsComingSoon] = useState(false);
-  const [rating, setRating] = useState(2);
+  // const [rating, setRating] = useState(2);
   const [imgPreview, setImgPreview] = useState("");
 
-  const { register,reset,  handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, reset, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: {
       tenPhim: "",
       biDanh: "",
@@ -51,6 +51,7 @@ export default function AddMovie({ handleClose }) {
       formData.append("sapChieu", isComingSoon);
       formData.append("dangChieu", isNowShowing);
       formData.append("hot", isHot);
+      formData.append("danhGia", 10);
 
 
       return addMovie(formData);
@@ -64,12 +65,12 @@ export default function AddMovie({ handleClose }) {
       reset()
     },
     onError: () => {
-      
+
     },
-    
+
   });
-  
-  console.log(isComingSoon,isHot,isNowShowing)
+
+
 
   const hinhAnh = watch("hinhAnh");
 
@@ -99,7 +100,7 @@ export default function AddMovie({ handleClose }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+          
           id="tenPhim"
           label="Tên Phim"
           variant="outlined"
@@ -112,7 +113,7 @@ export default function AddMovie({ handleClose }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+          
           id="biDanh"
           label="Bí Danh"
           variant="outlined"
@@ -125,7 +126,7 @@ export default function AddMovie({ handleClose }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+          
           id="moTa"
           label="Mô tả"
           variant="outlined"
@@ -138,13 +139,11 @@ export default function AddMovie({ handleClose }) {
       <div>
         <input
           style={{ marginBottom: "15px" }}
-          fullWidth="100%"
+          
           id="hinhAnh"
           label="Hình Ảnh"
           type="file"
           variant="outlined"
-          error={!!errors.hinhAnh}
-          helperText={errors.hinhAnh?.message}
           {...register("hinhAnh")}
         />
         {/* event.target.files */}
@@ -154,7 +153,7 @@ export default function AddMovie({ handleClose }) {
       <div>
         <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+          
           id="trailer"
           label="Trailer"
           variant="outlined"
@@ -167,7 +166,7 @@ export default function AddMovie({ handleClose }) {
       <div>
         {/* <TextField
           sx={{ marginBottom: "15px" }}
-          fullWidth="100%"
+          
           id="ngayKhoiChieu"
           label="Ngày Khởi Chiếu Phim"
           type="date"
@@ -215,9 +214,9 @@ export default function AddMovie({ handleClose }) {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"  {...register("dangChieu")}
             onChange={(event) => {
-              console.log("event",event.target.value)
+              console.log("event", event.target.value)
               setIsNowShowing(event.target.value === "true"); // Chuyển chuỗi "true" thành true, "false" thành false
-              console.log("dangchieu",isNowShowing)
+              console.log("dangchieu", isNowShowing)
             }}
           >
 
@@ -234,15 +233,15 @@ export default function AddMovie({ handleClose }) {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group" {...register("hot")}
             onChange={(event) => {
-              console.log("hot",isHot)
-              console.log("event",event.target.value)
+              console.log("hot", isHot)
+              console.log("event", event.target.value)
               setIsHot(event.target.value === "true"); // Chuyển chuỗi "true" thành true, "false" thành false
-              console.log("hot",isHot)
+              console.log("hot", isHot)
 
             }}
           >
 
-            <FormControlLabel value={true.toString()} control={<Radio />}  label="True" />
+            <FormControlLabel value={true.toString()} control={<Radio />} label="True" />
             <FormControlLabel value={false.toString()} control={<Radio />} label="False" />
 
           </RadioGroup>

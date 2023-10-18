@@ -72,7 +72,7 @@ export default function Header(props) {
     setAnchorElNav(null);
     navigate(`/`);
     const element = document.getElementById(`${page.id}`);
-    element.scrollIntoView({ behavior: "smooth" });
+    element?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleCloseUserMenu = (setting) => {
@@ -81,7 +81,6 @@ export default function Header(props) {
       handleSignout();
     }
   };
-
   return (
     <>
       <CssBaseline />
@@ -148,6 +147,12 @@ export default function Header(props) {
                       <Typography textAlign="center">{page.label}</Typography>
                     </MenuItem>
                   ))}
+
+                  {currentUser?.maLoaiNguoiDung === "QuanTri" &&   <MenuItem
+                      onClick={() => navigate(`/admin/movies`)}
+                    >
+                      <Typography textAlign="center">Trang Quản Trị</Typography>
+                    </MenuItem> }
                 </Menu>
               </Box>
 
@@ -195,6 +200,11 @@ export default function Header(props) {
                     {page.label}
                   </Button>
                 ))}
+                 {currentUser?.maLoaiNguoiDung === "QuanTri" &&   <Button
+                      onClick={() => navigate(`/admin/movies`)}
+                    >
+                     Trang Quản Trị
+                    </Button> }
               </Box>
 
               {/* Account */}

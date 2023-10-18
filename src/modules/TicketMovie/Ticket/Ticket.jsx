@@ -2,12 +2,11 @@ import React, { useState } from "react";
 import { Divider, Paper, Typography } from "@mui/material";
 import { Text, TextColor, Row, TextSeat } from "./index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { ModalSuccess, ModalContent } from "../../../components/Modal";
 import { useNavigate } from "react-router-dom";
-import { ButtonMain } from "../../components/ButtonMain";
-import { useTicketContext } from "../../contexts/TicketContext/TicketContext";
-import { bookTicket } from "../../apis/bookTicketAPI";
-import { ModalContent, ModalSuccess } from "../../components/Modal";
+import { ButtonMain } from "../../../components/ButtonMain";
+import { useTicketContext } from "../../../contexts/TicketContext/TicketContext";
+import { bookTicket } from "../../../apis/bookTicketAPI";
+import { ModalContent, ModalSuccess } from "../../../components/Modal";
 
 export default function Ticket({ ticketInfo }) {
   const navigate = useNavigate();

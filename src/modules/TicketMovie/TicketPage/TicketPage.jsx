@@ -2,9 +2,9 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Grid, Box, Typography, Paper } from "@mui/material";
 import { GridCustom, ButtonSeat } from "./index";
-import { useTicketContext } from "../../contexts/TicketContext/TicketContext";
-import { getTicketMovie } from "../../apis/bookTicketAPI";
-import Loading from "../../components/Loading/Loading";
+import { useTicketContext } from "../../../contexts/TicketContext/TicketContext";
+import { getTicketMovie } from "../../../apis/bookTicketAPI";
+import Loading from "../../../components/Loading/Loading";
 
 export default function TicketPage({ showtimeId }) {
   const { selectedSeats, handleSelect } = useTicketContext();

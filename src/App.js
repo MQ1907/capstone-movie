@@ -11,7 +11,8 @@ import ProtectedRoute from "./routers/ProtectedRoute/ProtectedRoute";
 import AdminMovie from "./modules/AdminMovie/AdminMovie";
 import AdminLayout from "./layouts/AdminLayout";
 import UserManagement from "./modules/AdminMovie/User/UserManagement/UserManagement";
-import TicketMovie from "./TicketMovie/TicketMovie";
+import TicketMovie from "./modules/TicketMovie/TicketMovie";
+import AdminProtectedMovieRoute from "./routers/AdminProtectedMovieRoute";
 
 function App() {
   return (
@@ -23,25 +24,20 @@ function App() {
             <Route path="movies/:movieId" element={<Details />} />
 
             <Route element={<ProtectedRoute />}>
-              <Route
-                path="tickets/:showtimeId"
-                element={<TicketMovie/>}
-              />
+              <Route path="tickets/:showtimeId" element={<TicketMovie />} />
             </Route>
-
-            {/* Admin */}
-
-            {/* <Route path="/admin/movies" element={<AdminMovie />} /> */}
           </Route>
 
+          
           {/* Admin */}
-          {/* <Route element={<AdminProtectedMovieRoute />} />> */}
-          <Route path="/admin"  element={<AdminLayout/>}>
-            {/* <Route  element={<AdminMovie />} /> */}
-            <Route path="movies" index element={<AdminMovie />} />
-            <Route path="users" element={<UserManagement />} />
+          <Route element={<AdminProtectedMovieRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              {/* <Route  element={<AdminMovie />} /> */}
+              <Route path="movies" index element={<AdminMovie />} />
+              <Route path="users" element={<UserManagement />} />
+            </Route>
           </Route>
-          {/* <Route /> */}
+
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<Signup />} />
           <Route path="*" element={<NotFound />} />

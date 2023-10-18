@@ -14,7 +14,7 @@ export async function getMovie() {
   try {
     const response = await fetcher.get("/QuanLyPhim/LayDanhSachPhim", {
       params: {
-        maNhom: "GP09",
+        maNhom: "GP13",
       },
     });
     return response.data.content;

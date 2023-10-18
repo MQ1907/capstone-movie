@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 import { Box, Container, Grid } from "@mui/material";
 import TicketPage from "./TicketPage/TicketPage";
 import Ticket from "./Ticket/Ticket";
-import { getTicketMovie } from "../apis/bookTicketAPI";
-import TicketProvider from "../contexts/TicketContext/TicketContext";
-import Loading from "../components/Loading/Loading";
+import { getTicketMovie } from "../../apis/bookTicketAPI";
+import TicketProvider from "../../contexts/TicketContext/TicketContext";
+import Loading from "../../components/Loading/Loading";
 
 export default function TicketMovie() {
   const { showtimeId } = useParams();

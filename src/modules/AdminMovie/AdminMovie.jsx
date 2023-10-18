@@ -49,12 +49,6 @@ export default function AdminMovie() {
     queryFn: () => getMovie(),
   })
 
-
-
-  console.log(data)
-
-
-
   const { mutate: handleDeleteMovie } = useMutation({
     mutationFn: (values) => deleteMovie(values),
 

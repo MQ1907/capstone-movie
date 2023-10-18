@@ -45,7 +45,7 @@ const handleNavigateAdmin = (url)=>{
                                 letterSpacing: ".3rem",
                                 color: "#d32f2f",
                                 textDecoration: "none",
-                            }}
+                            }} onClick={()=> navigate("/")}
                         >
                             Admin
                         </Typography>

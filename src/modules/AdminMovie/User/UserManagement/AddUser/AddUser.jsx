@@ -48,7 +48,18 @@ export default function AddUser({ onClose }) {
     onSuccess: () => {
       queryClient.invalidateQueries("customer");
       setOpenSuccess(true);
-    },
+      reset({
+        taiKhoan: "",
+        matKhau: "",
+        email: "",
+        soDt: "",
+        maNhom: "GP13",
+        maLoaiNguoiDung: "",
+        hoTen: "",
+      });
+    }, onError: ()=>{
+       setOpenError(true)
+    }
   });
 
   const {
@@ -75,15 +86,15 @@ export default function AddUser({ onClose }) {
     console.log(values);
     // Gọi API đăng ký
     handleAddUser(values);
-    reset({
-      taiKhoan: "",
-      matKhau: "",
-      email: "",
-      soDt: "",
-      maNhom: "GP13",
-      maLoaiNguoiDung: "",
-      hoTen: "",
-    });
+    // reset({
+    //   taiKhoan: "",
+    //   matKhau: "",
+    //   email: "",
+    //   soDt: "",
+    //   maNhom: "GP13",
+    //   maLoaiNguoiDung: "",
+    //   hoTen: "",
+    // });
   };
 
   // const handleChange = (event) => {
@@ -98,7 +109,7 @@ export default function AddUser({ onClose }) {
     setOpenSuccess(false);
     onClose();
   };
-
+console.log(openError)
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -215,7 +226,7 @@ export default function AddUser({ onClose }) {
               <Box display={"flex"} justifyContent={"center"}>
                 <img
                   style={{ width: "80px", marginTop: "10px" }}
-                  src="/img/animation_error_small.gif"
+                  src="/Animation_1697533657854.gif"
                   alt="confirm"
                 />
               </Box>
@@ -226,7 +237,7 @@ export default function AddUser({ onClose }) {
           </Modal>
         )}
 
-        {/* Thông báo khi chỉnh sửa thành công */}
+        {/* Thông báo khi  thành công */}
         <Modal
           open={openSuccess}
           onClose={handleCloseSuccess}
@@ -249,12 +260,12 @@ export default function AddUser({ onClose }) {
             <Box display={"flex"} justifyContent={"center"}>
               <img
                 style={{ width: "80px", marginTop: "10px" }}
-                src="/img/animation_lnfs5c14_small.gif"
+                src="/Animation_1697533657854.gif"
                 alt="confirm"
               />
             </Box>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Chỉnh sửa thông tin người dùng thành công
+              Thêm thông tin người dùng thành công
             </Typography>
           </Box>
         </Modal>
